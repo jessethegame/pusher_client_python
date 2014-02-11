@@ -1,11 +1,11 @@
+from .shim import httplib, urllib
+
 import os
 import sys
 import time
-import httplib
 import hmac
 import json
 import hashlib
-import urllib
 import re
 import socket
 
@@ -45,7 +45,7 @@ class Pusher(object):
         self._channels = {}
 
     def __getitem__(self, key):
-        if not self._channels.has_key(key):
+        if not key in self._channels:
             return self._make_channel(key)
         return self._channels[key]
 
@@ -80,12 +80,12 @@ class Channel(object):
     def signed_query(self, event, json_data, socket_id):
         query_string = self.compose_querystring(event, json_data, socket_id)
         string_to_sign = "POST\n%s\n%s" % (self.path, query_string)
-        signature = hmac.new(self.pusher.secret, string_to_sign, hashlib.sha256).hexdigest()
+        signature = hmac.new(self.pusher.secret.encode('utf-8'), string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
         return "%s&auth_signature=%s" % (query_string, signature)
 
     def compose_querystring(self, event, json_data, socket_id):
         hasher = hashlib.md5()
-        hasher.update(json_data)
+        hasher.update(json_data.encode('utf-8'))
         hash_str = hasher.hexdigest()
         ret = "auth_key=%s&auth_timestamp=%s&auth_version=1.0&body_md5=%s&name=%s" % (self.pusher.key, int(time.time()), hash_str, event)
         if socket_id:

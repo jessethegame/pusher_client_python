@@ -1,4 +1,6 @@
-import unittest, re, httplib, time, cgi
+from shim import httplib
+
+import unittest, re, time, cgi
 from nose.tools import *
 import mox
 
@@ -23,7 +25,7 @@ class PropertiesTest(unittest.TestCase):
     #
     # Using globals
     #
-    
+
     def test_global_app_id(self, *args):
         eq_(pusher.Pusher().app_id, '123')
 

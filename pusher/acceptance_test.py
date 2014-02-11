@@ -1,4 +1,5 @@
-import unittest, re, httplib, time, cgi
+from shim import httplib
+import unittest, re, time, cgi
 from nose.tools import *
 
 import sys
@@ -17,16 +18,16 @@ class RequestTest(unittest.TestCase):
       my_pusher = pusher.Pusher(app_id=test_config.app_id, key=test_config.app_key, secret=test_config.app_secret)
       channel = my_pusher['test-channel']
       result = channel.trigger('test-event', {'message': 'hello world'})
-      
+
       eq_(result, True)
-    
+
     def test_trigger_with_data_key_containing_percent(self):
       my_pusher = pusher.Pusher(app_id=test_config.app_id, key=test_config.app_key, secret=test_config.app_secret)
       channel = my_pusher['test-channel']
       result = channel.trigger('test-event', {'message %': 'hello world'})
 
       eq_(result, True)
-      
+
     def test_trigger_with_data_value_containing_percent(self):
       my_pusher = pusher.Pusher(app_id=test_config.app_id, key=test_config.app_key, secret=test_config.app_secret)
       channel = my_pusher['test-channel']
